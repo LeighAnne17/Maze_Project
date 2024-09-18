@@ -10,12 +10,23 @@ int main(void)
     SDL_Window *window = NULL;
     SDL_Renderer *renderer = NULL;
     int quit = 0;
-    SDL_Event event;
 
      // Camera parameters
     float posX = 3.0, posY = 3.0; // Starting position
     float dirX = -1.0, dirY = 0.0; // Initial direction
     float planeX = 0.0, planeY = 0.66; // Camera plane
+
+    // Example world map (1 = wall, 0 = empty space)
+    char worldMap[MAP_WIDTH][MAP_HEIGHT] = {
+        "1111111111",
+        "1000000001",
+        "1000000001",
+        "1000111001",
+        "1000111001",
+        "1000000001",
+        "1000000001",
+        "1111111111"
+    };
 
      // Initialize SDL
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -73,6 +84,7 @@ int main(void)
 void handle_input(int *quit, float *dirX, float *dirY, float *planeX, float *planeY)
 {
     SDL_Event event;
+    const float moveSpeed = 0.1; // Adjust movement speed as needed
     const float rotationSpeed = 0.05; // Adjust rotation speed as needed
 
     while (SDL_PollEvent(&event) != 0)
@@ -105,6 +117,38 @@ void handle_input(int *quit, float *dirX, float *dirY, float *planeX, float *pla
                     oldPlaneX = *planeX;
                     *planeX = *planeX * cos(-rotationSpeed) - *planeY * sin(-rotationSpeed);
                     *planeY = oldPlaneX * sin(-rotationSpeed) + *planeY * cos(-rotationSpeed);
+                    break;
+
+		    // Move forward
+                case SDLK_w:
+                    if (worldMap[(int)(*posX + *dirX * moveSpeed)][(int)(*posY)] == '0')
+                        *posX += *dirX * moveSpeed;
+                    if (worldMap[(int)(*posX)][(int)(*posY + *dirY * moveSpeed)] == '0')
+                        *posY += *dirY * moveSpeed;
+                    break;
+
+                // Move backward
+                case SDLK_s:
+                    if (worldMap[(int)(*posX - *dirX * moveSpeed)][(int)(*posY)] == '0')
+                        *posX -= *dirX * moveSpeed;
+                    if (worldMap[(int)(*posX)][(int)(*posY - *dirY * moveSpeed)] == '0')
+                        *posY -= *dirY * moveSpeed;
+                    break;
+
+                // Strafe left
+                case SDLK_a:
+                    if (worldMap[(int)(*posX - *planeX * moveSpeed)][(int)(*posY)] == '0')
+                        *posX -= *planeX * moveSpeed;
+                    if (worldMap[(int)(*posX)][(int)(*posY - *planeY * moveSpeed)] == '0')
+                        *posY -= *planeY * moveSpeed;
+                    break;
+
+                // Strafe right
+                case SDLK_d:
+                    if (worldMap[(int)(*posX + *planeX * moveSpeed)][(int)(*posY)] == '0')
+                        *posX += *planeX * moveSpeed;
+                    if (worldMap[(int)(*posX)][(int)(*posY + *planeY * moveSpeed)] == '0')
+                        *posY += *planeY * moveSpeed;
                     break;
             }
         }
