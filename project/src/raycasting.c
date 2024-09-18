@@ -1,4 +1,4 @@
-// src/raycasting.c
+ // src/raycasting.c
 #include "raycasting.h"
 #include <math.h>
 #include <SDL2/SDL.h>
@@ -105,7 +105,14 @@ void render_scene(SDL_Renderer *renderer)
             drawEnd = SCREEN_HEIGHT - 1;
 
         // Choose color based on side
-        SDL_SetRenderDrawColor(renderer, side == 1 ? 255 : 128, 0, 0, 255);
+	if (side == 1)  // NORTH/SOUTH facing walls
+        {
+            SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);  // Red for NORTH/SOUTH
+        }
+        else  // EAST/WEST facing walls
+        {
+            SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255); // Blue for EAST/WEST
+	}
 
         // Draw the vertical line for the wall
         SDL_RenderDrawLine(renderer, x, drawStart, x, drawEnd);
