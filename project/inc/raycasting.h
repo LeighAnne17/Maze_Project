@@ -7,7 +7,7 @@
 #define MAP_WIDTH 8
 #define MAP_HEIGHT 7
 
-void render_scene(SDL_Renderer *renderer);
+void render_scene(SDL_Renderer *renderer, float posX, float posY, float dirX, float dirY, float planeX, float planeY);
 
 #endif /* RAYCASTING_H */
 
