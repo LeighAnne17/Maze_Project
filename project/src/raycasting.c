@@ -13,7 +13,7 @@ int worldMap[MAP_HEIGHT][MAP_WIDTH] = {
     {1, 1, 1, 1, 1, 1, 1, 1},
 };
 
-void render_scene(SDL_Renderer *renderer)
+void render_scene(SDL_Renderer *renderer, float posX, float posY, float dirX, float dirY, float planeX, float planeY)
 {
     SDL_SetRenderDrawColor(renderer, 135, 206, 235, 255); // Sky blue for ceiling
     SDL_RenderClear(renderer);  // Clear screen (ceiling color)
