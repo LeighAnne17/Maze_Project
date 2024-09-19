@@ -1,12 +1,23 @@
 #include <SDL2/SDL.h>
+#include <math.h>
+#include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "raycasting.h"
 
 // Function prototypes
-void handle_input(int *quit, float *dirX, float *dirY, float *planeX, float *planeY);
+void handle_input(int *quit, float *posX, float *posY, float *dirX, float *dirY, float *planeX, float *planeY, char worldMAP[MAP_WIDTH][MAP_HEIGHT]);
+int load_map(const char *filename, char worldMap[MAP_WIDTH][MAP_HEIGHT]);
 
-int main(void)
+int main(int argc, char *argv[])
 {
+	if (argc < 2)
+	{
+		printf("Usage: %s <map_file>\n", argv[0]);
+		return 1;
+	}
+
+
     SDL_Window *window = NULL;
     SDL_Renderer *renderer = NULL;
     int quit = 0;
@@ -16,17 +27,14 @@ int main(void)
     float dirX = -1.0, dirY = 0.0; // Initial direction
     float planeX = 0.0, planeY = 0.66; // Camera plane
 
-    // Example world map (1 = wall, 0 = empty space)
-    char worldMap[MAP_WIDTH][MAP_HEIGHT] = {
-        "1111111111",
-        "1000000001",
-        "1000000001",
-        "1000111001",
-        "1000111001",
-        "1000000001",
-        "1000000001",
-        "1111111111"
-    };
+    // World map
+    char worldMap[MAP_WIDTH][MAP_HEIGHT];
+
+    if (!load_map(argv[1], worldMap))
+    {
+	    printf("Failed to load map from %s\n", argv[1]);
+	    return 1;
+    }
 
      // Initialize SDL
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -60,7 +68,7 @@ int main(void)
     // Main game loop
     while (!quit)
     {
-        handle_input(&quit, &dirX, &dirY, &planeX, &planeY);
+        handle_input(&quit, &posX, &posY, &dirX, &dirY, &planeX, &planeY, worldMap);
 
         // Render scene
         render_scene(renderer, posX, posY, dirX, dirY, planeX, planeY);
@@ -81,7 +89,7 @@ int main(void)
 }
 
 // Handle keyboard input for rotation
-void handle_input(int *quit, float *dirX, float *dirY, float *planeX, float *planeY)
+void handle_input(int *quit, float *posX, float *posY, float *dirX, float *dirY, float *planeX, float *planeY, char worldMap[MAP_WIDTH][MAP_HEIGHT])
 {
     SDL_Event event;
     const float moveSpeed = 0.1; // Adjust movement speed as needed
@@ -109,6 +117,7 @@ void handle_input(int *quit, float *dirX, float *dirY, float *planeX, float *pla
                     *planeX = *planeX * cos(rotationSpeed) - *planeY * sin(rotationSpeed);
                     *planeY = oldPlaneX * sin(rotationSpeed) + *planeY * cos(rotationSpeed);
                     break;
+
                 case SDLK_RIGHT:
                     // Rotate right
                     oldDirX = *dirX;
@@ -149,7 +158,7 @@ void handle_input(int *quit, float *dirX, float *dirY, float *planeX, float *pla
                         *posX += *planeX * moveSpeed;
                     if (worldMap[(int)(*posX)][(int)(*posY + *planeY * moveSpeed)] == '0')
                         *posY += *planeY * moveSpeed;
-                    break;
+		    break;
             }
         }
     }

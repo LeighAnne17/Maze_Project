@@ -1,5 +1,5 @@
 # Makefile
-CC = gcc
+CC = gcc-4.8
 CFLAGS = -Wall -Werror -Wextra -pedantic -Iinc   # Added -Iinc to include the inc directory
 LDFLAGS = -lSDL2 -lm
 SRC = src/main.c src/raycasting.c
