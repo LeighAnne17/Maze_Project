@@ -13,6 +13,13 @@ void handle_input(int *quit, float *posX, float *posY, float *dirX, float *dirY,
     const float rotationSpeed = 0.05; // Adjust rotation speed as needed
     const Uint8 *state = SDL_GetKeyboardState(NULL);
 
+    int rain = 0; // 0 for off, 1 for on
+SDL_Texture *rainTexture; // Load a rain texture if you have one
+
+if (event.key.keysym.sym == SDLK_r) { // Toggle rain with 'R'
+    rain = !rain;
+}
+
     while (SDL_PollEvent(&event) != 0)
     {
         if (event.type == SDL_QUIT)
@@ -140,6 +147,15 @@ int main(int argc, char *argv[])
 
         // Delay to limit frame rate
         SDL_Delay(16); // Approximately 60 FPS
+    }
+
+    SDL_Texture *load_weapon_texture(SDL_Renderer *renderer)
+    {
+	    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP("path/to/weapon_texture.bmp"));
+	    if (!texture) {
+		    printf("Error loading weapon texture: %s\n", SDL_GetError());
+	    }
+	    return texture;
     }
 
     // Clean up

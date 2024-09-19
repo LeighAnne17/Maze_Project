@@ -25,6 +25,19 @@ int worldMap[MAP_HEIGHT][MAP_WIDTH] = {
 
 void render_scene(SDL_Renderer *renderer, float posX, float posY, float dirX, float dirY, float planeX, float planeY)
 {
+	SDL_Rect weaponRect = {50, SCREEN_HEIGHT - 100, 100, 100}; // Adjust position and size
+SDL_RenderCopy(renderer, weaponTexture, NULL, &weaponRect);
+
+SDL_Rect enemyRect = {enemyX, enemyY, 50, 50}; // Replace with enemy coordinates
+SDL_RenderCopy(renderer, enemyTexture, NULL, &enemyRect);
+
+if (rain) {
+    for (int i = 0; i < RAIN_COUNT; i++) {
+        SDL_Rect rainDrop = {rand() % SCREEN_WIDTH, rand() % SCREEN_HEIGHT, 2, 10}; // Adjust size as needed
+        SDL_RenderCopy(renderer, rainTexture, NULL, &rainDrop);
+    }
+}
+
     SDL_SetRenderDrawColor(renderer, 135, 206, 235, 255); // Sky blue for ceiling
     SDL_RenderClear(renderer);  // Clear screen (ceiling color)
 
