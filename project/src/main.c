@@ -6,7 +6,63 @@
 #include "raycasting.h"
 
 // Function prototypes
-void handle_input(int *quit, float *posX, float *posY, float *dirX, float *dirY, float *planeX, float *planeY, char worldMAP[MAP_WIDTH][MAP_HEIGHT]);
+void handle_input(int *quit, float *posX, float *posY, float *dirX, float *dirY, float *planeX, float *planeY, char worldMAP[MAP_WIDTH][MAP_HEIGHT])
+{
+	SDL_Event event;
+    const float moveSpeed = 0.1; // Adjust movement speed as needed
+    const float rotationSpeed = 0.05; // Adjust rotation speed as needed
+    const Uint8 *state = SDL_GetKeyboardState(NULL);
+
+    while (SDL_PollEvent(&event) != 0)
+    {
+        if (event.type == SDL_QUIT)
+        {
+            *quit = 1;
+        }
+    }
+
+    // Rotation
+    if (state[SDL_SCANCODE_LEFT]) {
+        // Rotate left
+        *dirX = *dirX * cos(rotationSpeed) - *dirY * sin(rotationSpeed);
+        *dirY = *dirX * sin(rotationSpeed) + *dirY * cos(rotationSpeed);
+        *planeX = *planeX * cos(rotationSpeed) - *planeY * sin(rotationSpeed);
+        *planeY = *planeX * sin(rotationSpeed) + *planeY * cos(rotationSpeed);
+    }
+    if (state[SDL_SCANCODE_RIGHT]) {
+        // Rotate right
+        *dirX = *dirX * cos(-rotationSpeed) - *dirY * sin(-rotationSpeed);
+        *dirY = *dirX * sin(-rotationSpeed) + *dirY * cos(-rotationSpeed);
+        *planeX = *planeX * cos(-rotationSpeed) - *planeY * sin(-rotationSpeed);
+        *planeY = *planeX * sin(-rotationSpeed) + *planeY * cos(-rotationSpeed);
+    }
+
+    // Movement
+    if (state[SDL_SCANCODE_W]) {
+        if (worldMap[(int)(*posX + *dirX * moveSpeed)][(int)(*posY)] == '0')
+            *posX += *dirX * moveSpeed;
+        if (worldMap[(int)(*posX)][(int)(*posY + *dirY * moveSpeed)] == '0')
+            *posY += *dirY * moveSpeed;
+    }
+    if (state[SDL_SCANCODE_S]) {
+        if (worldMap[(int)(*posX - *dirX * moveSpeed)][(int)(*posY)] == '0')
+            *posX -= *dirX * moveSpeed;
+        if (worldMap[(int)(*posX)][(int)(*posY - *dirY * moveSpeed)] == '0')
+            *posY -= *dirY * moveSpeed;
+    }
+    if (state[SDL_SCANCODE_A]) {
+        if (worldMap[(int)(*posX - *planeX * moveSpeed)][(int)(*posY)] == '0')
+            *posX -= *planeX * moveSpeed;
+        if (worldMap[(int)(*posX)][(int)(*posY - *planeY * moveSpeed)] == '0')
+            *posY -= *planeY * moveSpeed;
+    }
+    if (state[SDL_SCANCODE_D]) {
+        if (worldMap[(int)(*posX + *planeX * moveSpeed)][(int)(*posY)] == '0')
+            *posX += *planeX * moveSpeed;
+        if (worldMap[(int)(*posX)][(int)(*posY + *planeY * moveSpeed)] == '0')
+            *posY += *planeY * moveSpeed;
+    }
+}
 int load_map(const char *filename, char worldMap[MAP_WIDTH][MAP_HEIGHT]);
 
 int main(int argc, char *argv[])

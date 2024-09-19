@@ -5,7 +5,7 @@
 
 SDL_Texture *load_texture(const char *file, SDL_Renderer *renderer)
 {
-    SDL_Texture *texture = IMG_LoadTexture(renderer, file);
+   SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, SDL_LoadBMP(file));
     if (!texture)
     {
         printf("Error loading texture: %s\n", SDL_GetError());
@@ -141,6 +141,14 @@ void render_scene(SDL_Renderer *renderer, float posX, float posY, float dirX, fl
         // Clean up texture (optional, you may want to store it if reused)
         SDL_DestroyTexture(texture);
     }
+
+    // Clear with the sky color
+    SDL_SetRenderDrawColor(renderer, 135, 206, 235, 255);
+    SDL_RenderClear(renderer);
+
+    // Draw ground texture
+    SDL_Rect groundRect = {0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2};
+    SDL_RenderCopy(renderer, groundTexture, NULL, &groundRect);
 
         // Choose color based on side
 	if (side == 1)  // NORTH/SOUTH facing walls
