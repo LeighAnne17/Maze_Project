@@ -9,6 +9,7 @@
 
 void render_scene(SDL_Renderer *renderer, float posX, float posY, float dirX, float dirY, float planeX, float planeY, char worldMap[MAP_WIDTH][MAP_HEIGHT]);
 int load_map(const char *filename, char worldMap[MAP_WIDTH][MAP_HEIGHT]);
+void draw_map(SDL_Renderer *renderer, char worldMap[MAP_WIDTH][MAP_HEIGHT], float posX, float posY, float dirX, float dirY);
 
 #endif /* RAYCASTING_H */
 
