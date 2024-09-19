@@ -65,6 +65,12 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+     char worldMap[MAP_WIDTH][MAP_HEIGHT];
+    if (argc < 2 || !load_map(argv[1], worldMap))
+    {
+        return 1; // Exit if map loading fails or no file is specified
+    }
+
     // Main game loop
     while (!quit)
     {

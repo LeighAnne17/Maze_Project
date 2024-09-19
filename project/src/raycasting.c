@@ -3,6 +3,16 @@
 #include <math.h>
 #include <SDL2/SDL.h>
 
+SDL_Texture *load_texture(const char *file, SDL_Renderer *renderer)
+{
+    SDL_Texture *texture = IMG_LoadTexture(renderer, file);
+    if (!texture)
+    {
+        printf("Error loading texture: %s\n", SDL_GetError());
+    }
+    return texture;
+}
+
 int worldMap[MAP_HEIGHT][MAP_WIDTH] = {
     {1, 1, 1, 1, 1, 1, 1, 1},
     {1, 0, 0, 0, 0, 0, 0, 1},
@@ -93,6 +103,12 @@ void render_scene(SDL_Renderer *renderer, float posX, float posY, float dirX, fl
         else
             perpWallDist = (mapY - posY + (1 - stepY) / 2) / rayDirY;
 
+	 // Calculate the distance to the wall
+        if (side == 0)
+            perpWallDist = (mapX - posX + (1 - stepX) / 2) / rayDirX;
+        else
+            perpWallDist = (mapY - posY + (1 - stepY) / 2) / rayDirY;
+
         // Calculate height of line to draw
         int lineHeight = (int)(SCREEN_HEIGHT / perpWallDist);
 
@@ -103,6 +119,28 @@ void render_scene(SDL_Renderer *renderer, float posX, float posY, float dirX, fl
         int drawEnd = lineHeight / 2 + SCREEN_HEIGHT / 2;
         if (drawEnd >= SCREEN_HEIGHT)
             drawEnd = SCREEN_HEIGHT - 1;
+
+	  // Load textures based on the wall side
+        SDL_Texture *texture;
+        if (side == 0)  // NORTH/SOUTH facing walls
+        {
+            texture = load_texture("assets/textures/wallN.bmp", renderer);
+        }
+        else  // EAST/WEST facing walls
+        {
+            texture = load_texture("assets/textures/wallE.bmp", renderer);
+        }
+
+        // Set up the texture rect
+        SDL_Rect srcRect = {0, 0, TEXTURE_WIDTH, TEXTURE_HEIGHT};  // Assume texture dimensions
+        SDL_Rect destRect = {x, drawStart, 1, lineHeight};
+
+        // Draw the texture
+        SDL_RenderCopy(renderer, texture, &srcRect, &destRect);
+
+        // Clean up texture (optional, you may want to store it if reused)
+        SDL_DestroyTexture(texture);
+    }
 
         // Choose color based on side
 	if (side == 1)  // NORTH/SOUTH facing walls

@@ -17,12 +17,19 @@ int load_map(const char *filename, char worldMap[MAP_WIDTH][MAP_HEIGHT])
 
     while (fgets(line, sizeof(line), file) && row < MAP_HEIGHT)
     {
+	 // Remove newline character if present
+        line[strcspn(line, "\n")] = 0;
+
         // Ensure the line length matches the expected map width
         if (strlen(line) >= MAP_WIDTH)
         {
             // Copy the line into the map array (ignore newline)
             strncpy(worldMap[row], line, MAP_WIDTH);
             row++;
+        }
+	else
+        {
+            printf("Warning: Line %d in map file %s has incorrect length\n", row + 1, filename);
         }
     }
 
