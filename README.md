@@ -20,7 +20,7 @@ SDL2 (Ensure SDL2 is installed using this guide)
 
 Steps
 Clone the repository:
-git clone https://github.com/yourusername/maze-project.git
+git clone https://github.com/LeighAnne17/Maze_Project.git
 
 Navigate to the project directory:
 cd maze-project
